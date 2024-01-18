@@ -1,0 +1,22 @@
+{
+  "name": "currency-alerts-telegram",
+  "version": "1.0.0",
+  "description": "This tool will generate Telegram alerts for set Currency exchange rates",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telegram",
+    "currency",
+    "alerts"
+  ],
+  "author": "Subhasis Banik",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "config": "^3.3.10",
+    "node-telegram-bot-api": "^0.64.0",
+    "winston": "^3.11.0"
+  }
+}

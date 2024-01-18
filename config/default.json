@@ -1,0 +1,17 @@
+{
+    "Application":{
+        "envConfig":{
+            "host":"",
+            "port":"",
+            "set_timeout":3000,
+            "telegram_bot":{
+                "name":"Currency Tracker",
+                "link":"t.me/CurrTrackrBot",
+                "chat_id_self":"466579087"
+            },
+            "wise":{
+                "url": "https://api.transferwise.com/v1/rates?source=EUR&target=INR"
+            }
+        }
+    }
+}
