@@ -4,20 +4,19 @@ const axios = require('axios');
 const winston = require('winston');
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const selfChatId = config.get('Application.envConfig.telegram_bot.chat_id_self');
 const wiseAccessToken = process.env.WISE_ACCESS_TOKEN;
 
 const logger = winston.createLogger({
   transports: [
-      new winston.transports.File({ filename: 'logs/app.log' }),
-      new winston.transports.Console()
+    new winston.transports.File({ filename: 'logs/app.log' }),
+    new winston.transports.Console()
   ]
 });
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, {polling: true});
+const bot = new TelegramBot(token, { polling: true });
 
-let targetRate;
+let user_data_dict = {};
 
 bot.onText(/Hello/, (msg, match) => {
   const chatId = msg.chat.id;
@@ -26,19 +25,23 @@ bot.onText(/Hello/, (msg, match) => {
 });
 
 bot.onText(/\/targetrate (.+)/, (msg, match) => {
-    const chatId = msg.chat.id;
-    targetRate = match[1];
-    logger.info('Target rate set by sender..');
-    bot.sendMessage(chatId, 'Target rate of ', targetRate, "is set");
+  const chatId = msg.chat.id;
+  user_data_dict[chatId] = match[1];
+  logger.info('Target rate set by sender..');
+  bot.sendMessage(chatId, 'Target rate of ', targetRate, "is set");
 });
 
 async function processSendMessage() {
-  if (null != targetRate){
-    logger.info("Target Rate set");
-    let exchangeRateVal = await fetchExchangeRate();
-    if(exchangeRateVal >= targetRate){
-      logger.info('Target rate met. Invoking message...')
-      bot.sendMessage(selfChatId, `The latest rate is : ${exchangeRateVal}`);
+  for (var key in user_data_dict) {
+    let targetRate = user_data_dict[key];
+    let user = key;
+    if (null != targetRate) {
+      logger.info("Target Rate set");
+      let exchangeRateVal = await fetchExchangeRate();
+      if (exchangeRateVal >= targetRate) {
+        logger.info('Target rate met. Invoking message...')
+        bot.sendMessage(user, `The latest rate is : ${exchangeRateVal}`);
+      }
     }
   }
 }
@@ -51,13 +54,13 @@ async function fetchExchangeRate() {
     let wiseUrl = config.get('Application.envConfig.wise.url');
     const response = await axios.get(wiseUrl, {
       headers: { Authorization: `Bearer ${wiseAccessToken}` }
-  });
+    });
     const exchangeRateObj = response.data;
 
     if (null != exchangeRateObj) {
       let exchangeRate = exchangeRateObj[0].rate;
 
-      logger.info('EUR to INR exchange rate:'+exchangeRate);
+      logger.info('EUR to INR exchange rate:' + exchangeRate);
       return exchangeRate;
     } else {
       logger.error('Failed to find exchange rate on the page.');
@@ -69,7 +72,7 @@ async function fetchExchangeRate() {
   }
 }
 
-  // Set up a recurring job to fetch exchange rates every minute
+// Set up a recurring job to fetch exchange rates every minute
 const interval = setInterval(() => {
   logger.info('Currency Tracker Bot started....');
   (async () => {
