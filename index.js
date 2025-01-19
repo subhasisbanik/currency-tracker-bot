@@ -29,7 +29,8 @@ bot.onText(/\/targetrate (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
   user_data_dict[chatId] = match[1];
   logger.info('Target rate set by sender..');
-  bot.sendMessage(chatId, 'Target rate of ', targetRate, "is set");
+  let targetRateMsg = "Target rate of " + user_data_dict[chatId] + " set by you"
+  bot.sendMessage(chatId, targetRateMsg);
 });
 
 async function processSendMessage() {
