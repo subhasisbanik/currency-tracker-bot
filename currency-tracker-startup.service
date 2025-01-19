@@ -1,0 +1,11 @@
+Unit]
+Description=Run My Startup Script
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/my_startup_script.sh
+Type=simple
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
