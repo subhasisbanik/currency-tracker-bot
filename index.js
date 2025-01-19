@@ -17,6 +17,7 @@ const logger = winston.createLogger({
 const bot = new TelegramBot(token, { polling: true });
 
 let user_data_dict = {};
+bot.sendMessage(chat_id=config.get("Application.envConfig.telegram_bot.chat_id_self"), text='Hey I am up and running!')
 
 bot.onText(/Hello/, (msg, match) => {
   const chatId = msg.chat.id;
